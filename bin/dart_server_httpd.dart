@@ -2,34 +2,21 @@ import 'dart:io';
 
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart';
-import 'package:shelf_router/shelf_router.dart';
 import 'package:shelf_static/shelf_static.dart';
 
-class DartServerHttpd {
-  final HttpServer _server;
-  final String path;
+import 'options.dart';
 
-  DartServerHttpd._(this._server, this.path);
-  String get host => _server.address.host;
-  int get port => _server.port;
-  String get urlBase => 'http://$host:$port/';
+void main(List<String> args) async {
+  final options = parseOptions(args);
 
-  static Future<DartServerHttpd> start({
-    String? path,
-    int port = 8080,
-    Object address = 'localhost',
-  }) async {
-    path ??= Directory.current.path;
+  final ip = InternetAddress.anyIPv4;
+  final path = Directory.current.path;
+  final port = int.parse(Platform.environment['PORT'] ?? '8080');
 
-    final pipeline = const Pipeline()
-        .addMiddleware(logRequests())
-        .addHandler(createStaticHandler(path, defaultDocument: 'index.html'));
+  final handler = Pipeline()
+      .addMiddleware(logRequests())
+      .addHandler(createStaticHandler(path, defaultDocument: 'index.html'));
 
-    final port = int.parse(Platform.environment['PORT'] ?? '8080');
-    final server = await serve(pipeline, address, port);
-    print('Server listening on port ${server.port}');
-    return DartServerHttpd._(server, path);
-  }
-
-  Future<void> destroy() => _server.close();
+  final server = await serve(handler, ip, port);
+  print('Server listening on port ${server.port}');
 }

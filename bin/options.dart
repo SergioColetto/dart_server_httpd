@@ -1,9 +1,9 @@
 import 'package:args/args.dart';
 
 class Options {
-  final int port;
+  final int? port;
   final String? path;
-  final String host;
+  final String? host;
   final bool help;
 
   Options({
@@ -22,7 +22,7 @@ Options parseOptionsResult(ArgResults result) => Options(
             'port',
           ),
       path: result['path'] as String?,
-      host: result['host'] as String,
+      host: result['host'] as String?,
       help: result['help'] as bool,
     );
 
