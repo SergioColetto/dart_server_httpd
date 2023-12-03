@@ -5,16 +5,16 @@ import 'package:shelf/shelf_io.dart';
 import 'package:shelf_router/shelf_router.dart';
 import 'package:shelf_static/shelf_static.dart';
 
-class HttpProxy {
+class DartServerHttpd {
   final HttpServer _server;
   final String path;
 
-  HttpProxy._(this._server, this.path);
+  DartServerHttpd._(this._server, this.path);
   String get host => _server.address.host;
   int get port => _server.port;
   String get urlBase => 'http://$host:$port/';
 
-  static Future<HttpProxy> start({
+  static Future<DartServerHttpd> start({
     String? path,
     int port = 8080,
     Object address = 'localhost',
@@ -28,7 +28,7 @@ class HttpProxy {
     final port = int.parse(Platform.environment['PORT'] ?? '8080');
     final server = await serve(pipeline, address, port);
     print('Server listening on port ${server.port}');
-    return HttpProxy._(server, path);
+    return DartServerHttpd._(server, path);
   }
 
   Future<void> destroy() => _server.close();
